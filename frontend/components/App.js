@@ -33,6 +33,8 @@ export default function App() {
     // and a message saying "Goodbye!" should be set in its proper state.
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   const login = ({ username, password }) => {
@@ -73,15 +75,25 @@ export default function App() {
       })
       .then((res) => {
         setArticles(res.data.articles);
+        setSpinnerOn(false);
       })
       .catch((err) => console.log(err));
   };
 
   const postArticle = (article) => {
+    const token = localStorage.getItem("token");
     // ✨ implement
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
+    axios
+      .post(articlesUrl, article, {
+        headers: {
+          authorization: token,
+        },
+      })
+      .then((res) => navigate("/articles"))
+      .catch((err) => console.log(err));
   };
 
   const updateArticle = ({ article_id, article }) => {
@@ -90,7 +102,9 @@ export default function App() {
   };
 
   const deleteArticle = (article_id) => {
-    // ✨ implement
+    setArticles(
+      articles.filter((article) => article.article_id !== Number(article_id))
+    );
   };
 
   return (
@@ -119,8 +133,17 @@ export default function App() {
             path="articles"
             element={
               <>
-                <ArticleForm />
-                <Articles getArticles={getArticles} />
+                <ArticleForm
+                  postArticle={postArticle}
+                  currentArticle={currentArticleId}
+                />
+                <Articles
+                  getArticles={getArticles}
+                  articles={articles}
+                  deleteArticle={deleteArticle}
+                  setCurrentArticleId={setCurrentArticleId}
+                  currentArticleId={currentArticleId}
+                />
               </>
             }
           />
