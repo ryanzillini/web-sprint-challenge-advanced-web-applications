@@ -34,7 +34,7 @@ export default function App() {
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   };
 
   const login = ({ username, password }) => {
@@ -102,16 +102,24 @@ export default function App() {
   };
 
   const deleteArticle = (article_id) => {
-    setArticles(
-      articles.filter((article) => article.article_id !== Number(article_id))
-    );
+    const token = localStorage.getItem("token");
+    axios
+      .delete(`${articlesUrl}/${article_id}`, {
+        headers: {
+          authorization: token,
+        },
+      })
+      .then((res) => {
+        setArticles(articles.filter((article) => article.id !== article_id));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
-      <Spinner />
-      <Message />
+      <Spinner on={spinnerOn} />
+      <Message message={message} />
       <button id="logout" onClick={logout}>
         Logout from app
       </button>
@@ -136,6 +144,8 @@ export default function App() {
                 <ArticleForm
                   postArticle={postArticle}
                   currentArticle={currentArticleId}
+                  setCurrentArticleId={setCurrentArticleId}
+                  updateArticle={updateArticle}
                 />
                 <Articles
                   getArticles={getArticles}
