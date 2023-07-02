@@ -76,6 +76,7 @@ export default function App() {
       .then((res) => {
         setArticles(res.data.articles);
         setSpinnerOn(false);
+        setMessage(res.data.message);
       })
       .catch((err) => console.log(err));
   };
@@ -99,18 +100,23 @@ export default function App() {
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
+    const token = localStorage.getItem("token");
+    axios.put();
   };
 
   const deleteArticle = (article_id) => {
     const token = localStorage.getItem("token");
+    setSpinnerOn(true);
     axios
-      .delete(`${articlesUrl}/${article_id}`, {
+      .delete(`${articlesUrl}/:${article_id}`, {
         headers: {
           authorization: token,
         },
       })
       .then((res) => {
-        setArticles(articles.filter((article) => article.id !== article_id));
+        getArticles();
+        setMessage(res.data.message);
+        setSpinnerOn(false);
       })
       .catch((err) => console.log(err));
   };
