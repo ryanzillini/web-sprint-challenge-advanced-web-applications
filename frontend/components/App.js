@@ -35,6 +35,8 @@ export default function App() {
     // using the helper above.
     localStorage.removeItem("token");
     navigate("/");
+    setMessage("Goodbye!");
+    setArticles([]);
   };
 
   const login = ({ username, password }) => {
@@ -76,7 +78,9 @@ export default function App() {
       .then((res) => {
         setArticles(res.data.articles);
         setSpinnerOn(false);
-        setMessage(res.data.message);
+        if (message === "") {
+          setMessage(res.data.message);
+        }
       })
       .catch((err) => console.log(err));
   };
@@ -87,28 +91,38 @@ export default function App() {
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
+    setSpinnerOn(true);
     axios
       .post(articlesUrl, article, {
         headers: {
           authorization: token,
         },
       })
-      .then((res) => navigate("/articles"))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        getArticles();
+        setMessage(res.data.message);
+        setSpinnerOn(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
     const token = localStorage.getItem("token");
-    axios.put();
+    axios
+      .put(`${articlesUrl}/${article_id}`, article, token)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   };
 
   const deleteArticle = (article_id) => {
     const token = localStorage.getItem("token");
     setSpinnerOn(true);
     axios
-      .delete(`${articlesUrl}/:${article_id}`, {
+      .delete(`${articlesUrl}/${article_id}`, {
         headers: {
           authorization: token,
         },
@@ -149,7 +163,7 @@ export default function App() {
               <>
                 <ArticleForm
                   postArticle={postArticle}
-                  currentArticle={currentArticleId}
+                  currentArticleId={currentArticleId}
                   setCurrentArticleId={setCurrentArticleId}
                   updateArticle={updateArticle}
                 />

@@ -19,10 +19,10 @@ export default function Articles(props) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/");
+      return navigate("/");
     } else {
       // ✨ grab the articles here, on first render only
-      getArticles();
+      return getArticles();
     }
   }, []);
 
@@ -53,13 +53,13 @@ export default function Articles(props) {
                 <div>
                   <button
                     disabled={isDisabled()}
-                    onClick={setCurrentArticleId(art.article_id)}
+                    onClick={() => setCurrentArticleId(art.article_id)}
                   >
                     Edit
                   </button>
                   <button
                     disabled={isDisabled()}
-                    onClick={deleteArticle(art.article_id)}
+                    onClick={() => deleteArticle(art.article_id)}
                   >
                     Delete
                   </button>
