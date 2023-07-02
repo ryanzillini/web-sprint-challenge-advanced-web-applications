@@ -113,8 +113,17 @@ export default function App() {
     // You got this!
     const token = localStorage.getItem("token");
     axios
-      .put(`${articlesUrl}/${article_id}`, article, token)
-      .then((res) => console.log(res))
+      .put(`${articlesUrl}/${article_id}`, article, {
+        headers: {
+          authorization: token,
+        },
+      })
+      .then((res) => {
+        getArticles();
+        setMessage(res.data.message);
+        setCurrentArticleId();
+        setSpinnerOn(false);
+      })
       .catch((err) => console.log(err));
   };
 
@@ -166,6 +175,7 @@ export default function App() {
                   currentArticleId={currentArticleId}
                   setCurrentArticleId={setCurrentArticleId}
                   updateArticle={updateArticle}
+                  articles={articles}
                 />
                 <Articles
                   getArticles={getArticles}

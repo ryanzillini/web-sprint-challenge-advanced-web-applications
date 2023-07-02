@@ -8,8 +8,13 @@ export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues);
   // ✨ where are my props? Destructure them here
 
-  const { currentArticleId, setCurrentArticleId, updateArticle, postArticle } =
-    props;
+  const {
+    currentArticleId,
+    setCurrentArticleId,
+    updateArticle,
+    postArticle,
+    articles,
+  } = props;
 
   const navigate = useNavigate();
 
@@ -20,7 +25,10 @@ export default function ArticleForm(props) {
     // values of the form. If it's not, we should reset the form back to initial values.
 
     if (currentArticleId) {
-      setValues({ ...values, [e.target.name]: [e.target.value] });
+      const currentArticle = articles.filter(
+        (art) => art.article_id === currentArticleId
+      );
+      setValues(currentArticle[0]);
     } else {
       setValues(initialFormValues);
     }
@@ -41,8 +49,8 @@ export default function ArticleForm(props) {
         article_id: currentArticleId,
         article: values,
       };
-      setValues(data);
-      return updateArticle(data);
+      setValues(initialFormValues);
+      updateArticle(data);
     } else {
       postArticle(values);
       setValues(initialFormValues);
